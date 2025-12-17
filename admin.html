@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Painel Administrativo · Compliance</title>
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --muted:#6b7280;
+      --text:#111827;
+      --border:#e5e7eb;
+      --border2:#d1d5db;
+      --blue:#1e56d0;
+      --shadow: 0 1px 2px rgba(16,24,40,.06), 0 6px 20px rgba(16,24,40,.08);
+      --shadow2: 0 1px 1px rgba(16,24,40,.05);
+      --radius:14px;
+      --container: 1120px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:var(--font);color:var(--text);background:var(--bg)}
+    a{color:inherit}
+    .container{max-width:var(--container);margin:0 auto;padding:18px 28px 80px}
+
+    /* Back */
+    .backLink{
+      display:inline-flex;align-items:center;gap:10px;
+      color:#111827;text-decoration:none;font-weight:600;cursor:pointer;
+      transition:transform .15s ease
+    }
+    .backLink:hover{transform:translateX(-2px)}
+    .backLink svg{width:18px;height:18px;stroke:#111827;stroke-width:2;fill:none}
+
+    /* Header */
+    .pageHead{padding-top:20px}
+    .pageHeadRow{
+      display:flex;align-items:flex-start;justify-content:space-between;
+      gap:18px;flex-wrap:wrap
+    }
+    .hBig{
+      margin:0;font-size:56px;line-height:1.05;letter-spacing:-0.8px;
+      font-weight:900;color:#2b2f36
+    }
+    .pLead{margin:10px 0 0;color:var(--muted);font-size:22px}
+
+    .secondaryBtn{
+      display:inline-flex;align-items:center;justify-content:center;
+      border:1px solid var(--border2);background:#fff;border-radius:10px;
+      padding:12px 16px;font-weight:800;color:#111827;
+      box-shadow:var(--shadow2);cursor:pointer
+    }
+
+    /* Panels */
+    .panel{
+      margin-top:28px;border:1px solid #c7d2fe;background:#eef2ff;border-radius:var(--radius);
+      padding:22px 22px 18px
+    }
+    .panelWhite{
+      background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);
+    }
+    .panelTitle{
+      display:flex;align-items:center;gap:12px;
+      font-size:28px;font-weight:900;margin:0
+    }
+    .panelTitle svg{width:28px;height:28px;stroke:#111827;stroke-width:2;fill:none}
+    .panelSub{margin:8px 0 18px;color:var(--muted);font-size:18px}
+
+    .saveRow{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+    .saveRow input{
+      flex:1;min-width:260px;
+      padding:16px 16px;border-radius:10px;border:1px solid var(--border2);
+      font-size:18px
+    }
+    .saveBtn{
+      width:220px;display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:14px 16px;border-radius:10px;border:none;background:#0f2f6f;color:#fff;
+      font-weight:900;font-size:18px;cursor:pointer;box-shadow:var(--shadow2)
+    }
+    .saveBtn svg{width:18px;height:18px;stroke:#fff;stroke-width:2;fill:none}
+
+    .emptyNote{text-align:center;margin:22px 0 6px;color:var(--muted);font-size:18px}
+
+    /* Tabs */
+    .tabs{
+      margin:26px auto 0;width:min(520px,100%);
+      background:#f3f4f6;border:1px solid var(--border);
+      border-radius:10px;display:flex;overflow:hidden
+    }
+    .tab{
+      flex:1;padding:12px 14px;text-align:center;font-weight:900;color:#111827;
+      background:transparent;border:none;cursor:pointer;
+      display:flex;justify-content:center;align-items:center;gap:10px
+    }
+    .tab svg{width:18px;height:18px;stroke:#111827;stroke-width:2;fill:none}
+    .tab.active{background:#fff;box-shadow:var(--shadow2)}
+
+    /* Weights grid */
+    .weightsGrid{
+      display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px
+    }
+    @media (max-width: 900px){ .weightsGrid{grid-template-columns:1fr} }
+
+    .weightBox{
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px;
+      background:#fff;
+    }
+    .weightBox .title{
+      font-weight:900;
+      margin-bottom:8px;
+    }
+    .weightRow{
+      display:flex;gap:10px;align-items:center;
+    }
+    .weightRow input[type="range"]{flex:1}
+    .weightRow input[type="number"]{
+      width:86px;padding:10px;border-radius:10px;border:1px solid var(--border2);
+      font-size:16px
+    }
+
+    /* Alert */
+    .alert{
+      margin-top:22px;border:1px solid #f6d365;background:#fff7dd;border-radius:var(--radius);padding:22px
+    }
+    .alert h3{margin:0 0 10px;font-size:30px;font-weight:900;color:#7a3d00}
+    .alert ul{margin:0;padding-left:22px;color:#7a3d00;font-size:18px;line-height:1.55}
+  </style>
+</head>
+
+<body>
+
+<!-- Ícones (sprite) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden">
+  <symbol id="i-back" viewBox="0 0 24 24">
+    <polyline points="15 18 9 12 15 6"></polyline>
+    <line x1="9" y1="12" x2="21" y2="12"></line>
+  </symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24">
+    <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path>
+  </symbol>
+  <symbol id="i-save" viewBox="0 0 24 24">
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"></path>
+    <path d="M17 21v-8H7v8"></path>
+    <path d="M7 3v5h8"></path>
+  </symbol>
+  <symbol id="i-user" viewBox="0 0 24 24">
+    <path d="M20 21a8 8 0 0 0-16 0"></path>
+    <circle cx="12" cy="8" r="4"></circle>
+  </symbol>
+  <symbol id="i-building" viewBox="0 0 24 24">
+    <path d="M3 21h18"></path>
+    <path d="M7 21V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14"></path>
+    <path d="M10 9h4M10 13h4M10 17h4"></path>
+  </symbol>
+</svg>
+
+<div class="container">
+
+  <!-- Voltar (ajuste o link se quiser) -->
+  <a class="backLink" href="index.html">
+    <svg viewBox="0 0 24 24"><use href="#i-back"/></svg>
+    Voltar
+  </a>
+
+  <div class="pageHead">
+    <div class="pageHeadRow">
+      <div>
+        <h1 class="hBig">Painel Administrativo</h1>
+        <div class="pLead">Configure os pesos das categorias de compliance para cálculo do score final</div>
+      </div>
+      <button class="secondaryBtn" type="button" id="btnRestoreDefaults">Restaurar Padrões</button>
+    </div>
+
+    <!-- Configurações salvas -->
+    <div class="panel" style="margin-top:28px;">
+      <h2 class="panelTitle">
+        <svg viewBox="0 0 24 24"><use href="#i-folder"/></svg>
+        Configurações Salvas
+      </h2>
+      <div class="panelSub">Crie e gerencie diferentes perfis de regras para análise</div>
+
+      <div class="saveRow">
+        <input id="cfgName" placeholder="Nome da configuração (ex: Caso 1)"/>
+        <button class="saveBtn" type="button" id="btnSaveConfig">
+          <svg viewBox="0 0 24 24"><use href="#i-save"/></svg>
+          Salvar Atual
+        </button>
+      </div>
+
+      <div class="emptyNote" id="cfgEmpty">Nenhuma configuração salva. Configure os pesos e clique em "Salvar Atual".</div>
+
+      <div id="cfgList" style="margin-top:14px; display:none;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+          <select id="cfgSelect" style="flex:1; min-width:260px; padding:12px 12px; border-radius:10px; border:1px solid var(--border2); font-size:16px;">
+            <option value="">Selecione uma configuração salva…</option>
+          </select>
+          <button class="secondaryBtn" type="button" id="btnLoadConfig">Carregar</button>
+          <button class="secondaryBtn" type="button" id="btnDeleteConfig">Excluir</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist" aria-label="Categorias">
+      <button class="tab active" type="button" id="tabTech">
+        <svg viewBox="0 0 24 24"><use href="#i-user"/></svg>
+        Técnicos
+      </button>
+      <button class="tab" type="button" id="tabCompany">
+        <svg viewBox="0 0 24 24"><use href="#i-building"/></svg>
+        Empresas
+      </button>
+    </div>
+
+    <!-- Pesos -->
+    <div class="panel panelWhite" style="margin-top:18px;">
+      <h2 class="panelTitle" style="font-size:22px;">Pesos de Avaliação</h2>
+      <div class="panelSub">Criminal · Cível · Trabalhista · Sanções · Documentos (0–100)</div>
+
+      <div class="weightsGrid">
+        <div class="weightBox">
+          <div class="title">Criminal</div>
+          <div class="weightRow">
+            <input id="w_criminal" type="range" min="0" max="100" value="30">
+            <input id="w_criminal_n" type="number" min="0" max="100" value="30">
+          </div>
+        </div>
+
+        <div class="weightBox">
+          <div class="title">Cível</div>
+          <div class="weightRow">
+            <input id="w_civel" type="range" min="0" max="100" value="20">
+            <input id="w_civel_n" type="number" min="0" max="100" value="20">
+          </div>
+        </div>
+
+        <div class="weightBox">
+          <div class="title">Trabalhista</div>
+          <div class="weightRow">
+            <input id="w_trabalhista" type="range" min="0" max="100" value="20">
+            <input id="w_trabalhista_n" type="number" min="0" max="100" value="20">
+          </div>
+        </div>
+
+        <div class="weightBox">
+          <div class="title">Sanções</div>
+          <div class="weightRow">
+            <input id="w_sancoes" type="range" min="0" max="100" value="20">
+            <input id="w_sancoes_n" type="number" min="0" max="100" value="20">
+          </div>
+        </div>
+
+        <div class="weightBox" style="grid-column:1/-1;">
+          <div class="title">Documentos</div>
+          <div class="weightRow">
+            <input id="w_documentos" type="range" min="0" max="100" value="10">
+            <input id="w_documentos_n" type="number" min="0" max="100" value="10">
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; color:var(--muted); font-size:16px;">
+        Soma dos pesos: <b id="w_sum">100</b>
+      </div>
+    </div>
+
+    <!-- Regras -->
+    <div class="alert">
+      <h3 id="rulesTitle">Regras Específicas para Técnicos</h3>
+      <ul id="rulesList">
+        <li>Processos cíveis e criminais: <b>NEGATIVA automática</b></li>
+        <li>Sanções: <b>NEGATIVA automática</b></li>
+        <li>Processos trabalhistas: Tratados como:<b>RISCO</b></li>
+        <li>Filiação partidária: <b>BLOQUEIO para técnico de atendimento de URNA</b></li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(() => {
+  const LS_KEY = "compliance_admin_configs_v1";
+  const LS_ACTIVE_TAB = "compliance_admin_tab_v1";
+  const $ = (id) => document.getElementById(id);
+
+  const tabTech = $("tabTech");
+  const tabCompany = $("tabCompany");
+
+  const btnRestore = $("btnRestoreDefaults");
+  const btnSave = $("btnSaveConfig");
+  const btnLoad = $("btnLoadConfig");
+  const btnDelete = $("btnDeleteConfig");
+
+  const cfgName = $("cfgName");
+  const cfgList = $("cfgList");
+  const cfgSelect = $("cfgSelect");
+  const cfgEmpty = $("cfgEmpty");
+
+  const rulesTitle = $("rulesTitle");
+  const rulesList = $("rulesList");
+
+  const w = {
+    criminal: [$("w_criminal"), $("w_criminal_n")],
+    civel: [$("w_civel"), $("w_civel_n")],
+    trabalhista: [$("w_trabalhista"), $("w_trabalhista_n")],
+    sancoes: [$("w_sancoes"), $("w_sancoes_n")],
+    documentos: [$("w_documentos"), $("w_documentos_n")],
+  };
+  const wSum = $("w_sum");
+
+  const DEFAULTS = {
+    tech:    { criminal:30, civel:20, trabalhista:20, sancoes:20, documentos:10 },
+    company: { criminal:25, civel:25, trabalhista:15, sancoes:25, documentos:10 }
+  };
+
+  function clampNum(v){
+    const n = Number(v);
+    if(Number.isNaN(n)) return 0;
+    return Math.max(0, Math.min(100, Math.round(n)));
+  }
+
+  function currentWeights(){
+    return {
+      criminal: clampNum(w.criminal[1].value),
+      civel: clampNum(w.civel[1].value),
+      trabalhista: clampNum(w.trabalhista[1].value),
+      sancoes: clampNum(w.sancoes[1].value),
+      documentos: clampNum(w.documentos[1].value),
+    };
+  }
+
+  function updateSum(){
+    const cw = currentWeights();
+    wSum.textContent = String(
+      cw.criminal + cw.civel + cw.trabalhista + cw.sancoes + cw.documentos
+    );
+  }
+
+  function applyWeights(obj){
+    ["criminal","civel","trabalhista","sancoes","documentos"].forEach(k=>{
+      w[k][0].value = obj[k];
+      w[k][1].value = obj[k];
+    });
+    updateSum();
+  }
+
+  function bindPair(rangeEl, numEl){
+    rangeEl.addEventListener("input", ()=>{ numEl.value = rangeEl.value; updateSum(); });
+    numEl.addEventListener("input", ()=>{ numEl.value = clampNum(numEl.value); rangeEl.value = numEl.value; updateSum(); });
+  }
+  bindPair(w.criminal[0], w.criminal[1]);
+  bindPair(w.civel[0], w.civel[1]);
+  bindPair(w.trabalhista[0], w.trabalhista[1]);
+  bindPair(w.sancoes[0], w.sancoes[1]);
+  bindPair(w.documentos[0], w.documentos[1]);
+
+  function loadConfigs(){
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); }
+    catch { return []; }
+  }
+  function saveConfigs(arr){
+    localStorage.setItem(LS_KEY, JSON.stringify(arr));
+    renderConfigs();
+  }
+
+  function renderConfigs(){
+    const arr = loadConfigs();
+    if(arr.length === 0){
+      cfgEmpty.style.display = "";
+      cfgList.style.display = "none";
+      cfgSelect.innerHTML = `<option value="">Selecione uma configuração salva…</option>`;
+      return;
+    }
+    cfgEmpty.style.display = "none";
+    cfgList.style.display = "";
+    cfgSelect.innerHTML =
+      `<option value="">Selecione uma configuração salva…</option>` +
+      arr.map((c,i)=>`<option value="${i}">${c.name} · ${c.tab.toUpperCase()}</option>`).join("");
+  }
+
+  function getTab(){ return localStorage.getItem(LS_ACTIVE_TAB) || "tech"; }
+  function setTab(tab){
+    localStorage.setItem(LS_ACTIVE_TAB, tab);
+    tabTech.classList.toggle("active", tab === "tech");
+    tabCompany.classList.toggle("active", tab === "company");
+
+    if(tab === "tech"){
+      rulesTitle.textContent = "Regras Específicas para Técnicos";
+      rulesList.innerHTML = `
+         <li>Processos cíveis e criminais: <b>NEGATIVA automática</b></li>
+        <li>Sanções: <b>NEGATIVA automática</b></li>
+        <li>Processos trabalhistas: Tratados como:<b>RISCO</b></li>
+        <li>Filiação partidária: <b>BLOQUEIO para técnico de atendimento de URNA</b></li>
+      `;
+      applyWeights(DEFAULTS.tech);
+    } else {
+      rulesTitle.textContent = "Regras Específicas para Empresas";
+      rulesList.innerHTML = `
+        <li>Processos cíveis e criminais: <b>NEGATIVA automática</b></li>
+        <li>Sanções: <b>NEGATIVA automática</b></li>
+        <li>Processos trabalhistas: Tratados como:<b>RISCO</b></li>
+        <li>Filiação partidária: <b>BLOQUEIO para técnico de atendimento de URNA</b></li>
+      `;
+      applyWeights(DEFAULTS.company);
+    }
+  }
+
+  // Actions
+  btnSave.addEventListener("click", ()=>{
+    const name = (cfgName.value || "").trim();
+    if(!name){ alert("Informe um nome para a configuração (ex: Caso 1)."); return; }
+    const tab = getTab();
+    const arr = loadConfigs();
+    arr.unshift({ name, tab, weights: currentWeights(), savedAt: new Date().toISOString() });
+    saveConfigs(arr.slice(0, 50));
+    cfgName.value = "";
+    alert("Configuração salva ✅");
+  });
+
+  btnLoad.addEventListener("click", ()=>{
+    const idx = Number(cfgSelect.value);
+    if(cfgSelect.value === "" || Number.isNaN(idx)){ alert("Selecione uma configuração."); return; }
+    const arr = loadConfigs();
+    const cfg = arr[idx];
+    if(!cfg){ alert("Configuração não encontrada."); return; }
+    setTab(cfg.tab);
+    applyWeights(cfg.weights);
+    alert("Configuração carregada ✅");
+  });
+
+  btnDelete.addEventListener("click", ()=>{
+    const idx = Number(cfgSelect.value);
+    if(cfgSelect.value === "" || Number.isNaN(idx)){ alert("Selecione uma configuração."); return; }
+    const arr = loadConfigs();
+    const cfg = arr[idx];
+    if(!cfg) return;
+    if(!confirm(`Excluir a configuração "${cfg.name}"?`)) return;
+    arr.splice(idx, 1);
+    saveConfigs(arr);
+  });
+
+  btnRestore.addEventListener("click", ()=>{
+    if(!confirm("Restaurar padrões desta aba?")) return;
+    applyWeights(getTab() === "tech" ? DEFAULTS.tech : DEFAULTS.company);
+  });
+
+  tabTech.addEventListener("click", ()=> setTab("tech"));
+  tabCompany.addEventListener("click", ()=> setTab("company"));
+
+  // Init
+  renderConfigs();
+  setTab(getTab());
+  updateSum();
+})();
+</script>
+
+</body>
+</html>

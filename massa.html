@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Consulta em Massa · Compliance</title>
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --muted:#6b7280;
+      --text:#111827;
+      --border:#e5e7eb;
+      --border2:#d1d5db;
+      --blue:#1e56d0;
+      --shadow: 0 1px 2px rgba(16,24,40,.06), 0 6px 20px rgba(16,24,40,.08);
+      --shadow2: 0 1px 1px rgba(16,24,40,.05);
+      --radius:14px;
+      --container: 1120px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      --ok:#176b44;
+      --bad:#a12b2d;
+      --warn:#7a5a00;
+      --okBg: rgba(43,182,115,.12);
+      --badBg: rgba(255,77,79,.10);
+      --warnBg: rgba(255,204,0,.14);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:var(--font);color:var(--text);background:var(--bg)}
+    .container{max-width:var(--container);margin:0 auto;padding:18px 28px 80px}
+
+    /* ===== ZOOM FIXO 90%  ===== */
+    .zoom-100{
+      transform: scale(0.8);
+      transform-origin: top center;
+      width: 125%;       /* 1 / 0.8 */
+      min-height: 125%;
+    }
+
+    /* Back */
+    .backLink{
+      display:inline-flex;align-items:center;gap:10px;
+      color:#111827;text-decoration:none;font-weight:600;cursor:pointer;
+      transition:transform .15s ease
+    }
+    .backLink:hover{transform:translateX(-2px)}
+    .backLink svg{width:18px;height:18px;stroke:#111827;stroke-width:2;fill:none}
+
+    /* Header */
+    .head{padding-top:18px}
+    h1{
+      margin:18px 0 0;
+      font-size:56px;
+      font-weight:900;
+      letter-spacing:-.8px;
+      color:#2b2f36;
+      line-height:1.05;
+    }
+    .lead{
+      margin:10px 0 0;
+      color:var(--muted);
+      font-size:22px;
+      line-height:1.45;
+    }
+
+    /* Card */
+    .card{
+      margin-top:30px;
+      max-width: 900px;
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:26px;
+      background:#fff;
+    }
+    .cardTitle{
+      display:flex;align-items:center;gap:12px;
+      margin:0;
+      font-size:30px;
+      font-weight:900;
+    }
+    .cardTitle svg{width:24px;height:24px;stroke:#111827;stroke-width:2;fill:none}
+    .cardSub{margin:8px 0 18px;color:var(--muted);font-size:18px}
+
+    /* Dropzone */
+    .dropzone{
+      border:2px dashed #cbd5e1;
+      border-radius:12px;
+      height:220px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      background:#fbfdff;
+      cursor:pointer;
+      transition: background .15s ease;
+      text-align:center;
+      padding:18px;
+    }
+    .dropzone:hover{background:#f8fafc}
+    .dropzone b{color:#0f2f6f}
+    .dropIcon{font-size:40px}
+
+    /* Actions */
+    .actions{
+      display:flex;gap:12px;flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .btn{
+      padding:12px 16px;
+      border-radius:10px;
+      border:1px solid var(--border2);
+      background:#fff;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow: var(--shadow2);
+    }
+    .btn.primary{
+      border:none;
+      background: var(--blue);
+      color:#fff;
+    }
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+
+    /* Preview/Result */
+    .panel{
+      margin-top:18px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:16px;
+      background:#fff;
+    }
+    .panel h3{
+      margin:0 0 10px;
+      font-size:18px;
+      font-weight:900;
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border:1px solid var(--border);
+      border-radius:12px;
+    }
+    th,td{
+      padding:10px 12px;
+      border-bottom:1px solid var(--border);
+      font-size:14px;
+      vertical-align:top;
+    }
+    th{
+      background:#f8fafc;
+      text-align:left;
+      color:#334155;
+      font-weight:900;
+    }
+    tr:last-child td{border-bottom:none}
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      border:1px solid transparent;
+      white-space:nowrap;
+    }
+    .ok{background:var(--okBg);border-color:rgba(43,182,115,.25);color:var(--ok)}
+    .bad{background:var(--badBg);border-color:rgba(255,77,79,.25);color:var(--bad)}
+    .warn{background:var(--warnBg);border-color:rgba(255,204,0,.30);color:var(--warn)}
+
+    .small{color:var(--muted);font-size:14px;line-height:1.45}
+    .codeBox{
+      margin-top:10px;
+      background:#f3f4f6;
+      border-radius:10px;
+      padding:14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:14px;
+      color:#111827;
+      white-space:pre;
+      overflow:auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== WRAPPER DO ZOOM (ÚNICA ALTERAÇÃO) ===== -->
+  <div class="zoom-80">
+
+  <!-- Icons -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-back" viewBox="0 0 24 24">
+      <polyline points="15 18 9 12 15 6"></polyline>
+      <line x1="9" y1="12" x2="21" y2="12"></line>
+    </symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+    </symbol>
+    <symbol id="i-info" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </symbol>
+  </svg>
+
+  <div class="container">
+    <a class="backLink" href="index.html">
+      <svg viewBox="0 0 24 24"><use href="#i-back"/></svg>
+      Voltar
+    </a>
+
+    <div class="head">
+      <h1>Consulta em Massa</h1>
+      <div class="lead">Upload de arquivo CSV para consultas em lote</div>
+
+      <div class="card">
+        <h2 class="cardTitle">
+          <svg viewBox="0 0 24 24"><use href="#i-doc"/></svg>
+          Upload de Arquivo CSV
+        </h2>
+        <div class="cardSub">Envie um arquivo CSV com os documentos para validação e triagem em lote</div>
+
+        <div class="dropzone" id="dropzone">
+          <div class="dropIcon">⤴</div>
+          <div><b>Clique para enviar</b> ou arraste o arquivo</div>
+          <div>CSV (máx. 5MB, até 500 registros)</div>
+          <input id="file" type="file" accept=".csv,text/csv" style="display:none"/>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" id="btnProcess" disabled>Processar arquivo</button>
+          <button class="btn" id="btnExport" disabled>Exportar resultado CSV</button>
+          <button class="btn" id="btnClear" disabled>Limpar</button>
+        </div>
+
+        <div class="panel" id="previewPanel" style="display:none">
+          <h3>Prévia do arquivo</h3>
+          <div class="small" id="previewMeta"></div>
+          <div style="height:10px"></div>
+          <div style="overflow:auto">
+            <table id="previewTable"></table>
+          </div>
+        </div>
+
+        <div class="panel" id="resultPanel" style="display:none">
+          <h3>Resultado</h3>
+          <div class="small" id="resultMeta"></div>
+          <div style="height:10px"></div>
+          <div style="overflow:auto">
+            <table id="resultTable"></table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 style="display:flex;align-items:center;gap:10px;">
+            <svg viewBox="0 0 24 24" width="20" height="20" style="stroke:#111827;stroke-width:2;fill:none"><use href="#i-info"/></svg>
+            Formato esperado do CSV
+          </h3>
+          <div class="small">O arquivo deve conter uma coluna de documento (CPF ou CNPJ). Separadores aceitos: <b>;</b> ou <b>,</b></div>
+          <div class="codeBox">documento;nome
+123.456.789-00;João Silva
+12.345.678/0001-90;Empresa XYZ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const $ = (id)=>document.getElementById(id);
+
+  const dz = $("dropzone");
+  const input = $("file");
+  const btnProcess = $("btnProcess");
+  const btnExport = $("btnExport");
+  const btnClear = $("btnClear");
+
+  const previewPanel = $("previewPanel");
+  const previewTable = $("previewTable");
+  const previewMeta = $("previewMeta");
+
+  const resultPanel = $("resultPanel");
+  const resultTable = $("resultTable");
+  const resultMeta = $("resultMeta");
+
+  let parsed = null;
+  let results = null;
+
+  function onlyDigits(s){ return (s||"").replace(/\\D/g,""); }
+
+  function isValidCPF(cpf){
+    cpf = onlyDigits(cpf);
+    if(cpf.length !== 11) return false;
+    if(/^(\\d)\\1+$/.test(cpf)) return false;
+
+    let sum = 0;
+    for(let i=0; i<9; i++) sum += parseInt(cpf[i]) * (10 - i);
+    let d1 = (sum * 10) % 11; if(d1 === 10) d1 = 0;
+    if(d1 !== parseInt(cpf[9])) return false;
+
+    sum = 0;
+    for(let i=0; i<10; i++) sum += parseInt(cpf[i]) * (11 - i);
+    let d2 = (sum * 10) % 11; if(d2 === 10) d2 = 0;
+    return d2 === parseInt(cpf[10]);
+  }
+
+  function isValidCNPJ(cnpj){
+    cnpj = onlyDigits(cnpj);
+    if(cnpj.length !== 14) return false;
+    if(/^(\\d)\\1+$/.test(cnpj)) return false;
+
+    const calc = (base) => {
+      const weights = base === 12
+        ? [5,4,3,2,9,8,7,6,5,4,3,2]
+        : [6,5,4,3,2,9,8,7,6,5,4,3,2];
+      let sum = 0;
+      for(let i=0; i<weights.length; i++) sum += parseInt(cnpj[i]) * weights[i];
+      const mod = sum % 11;
+      return (mod < 2) ? 0 : (11 - mod);
+    };
+
+    const d1 = calc(12);
+    if(d1 !== parseInt(cnpj[12])) return false;
+    const d2 = calc(13);
+    return d2 === parseInt(cnpj[13]);
+  }
+
+  function detectDelimiter(text){
+    const head = text.split(/\\r?\\n/).slice(0,5).join("\\n");
+    const semi = (head.match(/;/g)||[]).length;
+    const comma = (head.match(/,/g)||[]).length;
+    return semi >= comma ? ";" : ",";
+  }
+
+  function splitLine(line, delim){
+    return line.split(delim).map(s=>s.trim());
+  }
+
+  function parseCSV(text){
+    const delim = detectDelimiter(text);
+    const lines = text.split(/\\r?\\n/).map(l=>l.trim()).filter(l=>l.length>0);
+    if(lines.length < 2) throw new Error("CSV sem dados suficientes.");
+
+    const headers = splitLine(lines[0], delim);
+    const rows = [];
+
+    for(let i=1; i<lines.length; i++){
+      const cols = splitLine(lines[i], delim);
+      const obj = {};
+      for(let c=0; c<headers.length; c++){
+        obj[headers[c]] = cols[c] ?? "";
+      }
+      rows.push(obj);
+      if(rows.length >= 500) break;
+    }
+
+    return { delim, headers, rows };
+  }
+
+  function findDocKey(headers){
+    const lower = headers.map(h=>h.toLowerCase());
+    const idx = lower.findIndex(h => ["documento","doc","cpf","cnpj"].includes(h));
+    return idx >= 0 ? headers[idx] : headers[0];
+  }
+
+  function renderTable(tableEl, headers, rows, rowLimit=10){
+    tableEl.innerHTML = "";
+    const thead = document.createElement("thead");
+    const trh = document.createElement("tr");
+    headers.forEach(h=>{
+      const th = document.createElement("th");
+      th.textContent = h;
+      trh.appendChild(th);
+    });
+    thead.appendChild(trh);
+    tableEl.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    rows.slice(0,rowLimit).forEach(r=>{
+      const tr = document.createElement("tr");
+      headers.forEach(h=>{
+        const td = document.createElement("td");
+        td.textContent = r[h] ?? "";
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    tableEl.appendChild(tbody);
+  }
+
+  function renderResultTable(){
+    resultTable.innerHTML = "";
+    const headers = ["Documento", "Status", "Motivo"];
+    const thead = document.createElement("thead");
+    const trh = document.createElement("tr");
+    headers.forEach(h=>{
+      const th = document.createElement("th");
+      th.textContent = h;
+      trh.appendChild(th);
+    });
+    thead.appendChild(trh);
+    resultTable.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    results.forEach(r=>{
+      const tr = document.createElement("tr");
+
+      const tdDoc = document.createElement("td");
+      tdDoc.textContent = r.documento;
+      tr.appendChild(tdDoc);
+
+      const tdSt = document.createElement("td");
+      const badge = document.createElement("span");
+      badge.className = "badge " + (r.status==="VÁLIDO" ? "ok" : (r.status==="INVÁLIDO" ? "bad" : "warn"));
+      badge.textContent = r.status;
+      tdSt.appendChild(badge);
+      tr.appendChild(tdSt);
+
+      const tdMot = document.createElement("td");
+      tdMot.textContent = r.motivo || "";
+      tr.appendChild(tdMot);
+
+      tbody.appendChild(tr);
+    });
+    resultTable.appendChild(tbody);
+  }
+
+  function setFile(f){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        parsed = parseCSV(reader.result.toString());
+        const docKey = findDocKey(parsed.headers);
+
+        previewMeta.textContent = `Separador detectado: "${parsed.delim}" · Coluna de documento: "${docKey}" · Registros: ${parsed.rows.length}`;
+        renderTable(previewTable, parsed.headers, parsed.rows, 8);
+        previewPanel.style.display = "block";
+
+        btnProcess.disabled = false;
+        btnClear.disabled = false;
+        btnExport.disabled = true;
+        resultPanel.style.display = "none";
+        results = null;
+
+      }catch(e){
+        alert("Erro ao ler CSV: " + e.message);
+      }
+    };
+    reader.readAsText(f, "utf-8");
+  }
+
+  dz.addEventListener("click", ()=> input.click());
+  dz.addEventListener("dragover", (e)=>{ e.preventDefault(); dz.style.background="#f8fafc"; });
+  dz.addEventListener("dragleave", ()=>{ dz.style.background="#fbfdff"; });
+  dz.addEventListener("drop", (e)=>{
+    e.preventDefault();
+    dz.style.background="#fbfdff";
+    if(e.dataTransfer.files && e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+  });
+  input.addEventListener("change", ()=>{ if(input.files && input.files[0]) setFile(input.files[0]); });
+
+  btnProcess.addEventListener("click", ()=>{
+    if(!parsed) return;
+    const docKey = findDocKey(parsed.headers);
+    results = parsed.rows.map((row)=>{
+      const raw = (row[docKey] ?? "").toString().trim();
+      const digits = onlyDigits(raw);
+
+      if(!digits) return { documento: raw || "(vazio)", status:"INVÁLIDO", motivo:"Documento vazio" };
+      if(!(digits.length===11 || digits.length===14)) return { documento: raw, status:"INVÁLIDO", motivo:"Tamanho inválido (CPF=11, CNPJ=14)" };
+
+      if(digits.length===11){
+        const ok = isValidCPF(digits);
+        return { documento: raw, status: ok ? "VÁLIDO" : "INVÁLIDO", motivo: ok ? "CPF válido" : "CPF inválido (DV)" };
+      } else {
+        const ok = isValidCNPJ(digits);
+        return { documento: raw, status: ok ? "VÁLIDO" : "INVÁLIDO", motivo: ok ? "CNPJ válido" : "CNPJ inválido (DV)" };
+      }
+    });
+
+    const total = results.length;
+    const val = results.filter(r=>r.status==="VÁLIDO").length;
+    const inv = results.filter(r=>r.status==="INVÁLIDO").length;
+
+    resultMeta.textContent = `Processado: ${total} · Válidos: ${val} · Inválidos: ${inv}`;
+    renderResultTable();
+    resultPanel.style.display = "block";
+    btnExport.disabled = false;
+  });
+
+  btnExport.addEventListener("click", ()=>{
+    if(!results) return;
+    const header = "documento;status;motivo\\n";
+    const body = results.map(r=>{
+      const d = (r.documento||"").replace(/\\n/g," ").replace(/;/g,",");
+      const s = (r.status||"").replace(/;/g,",");
+      const m = (r.motivo||"").replace(/\\n/g," ").replace(/;/g,",");
+      return `${d};${s};${m}`;
+    }).join("\\n");
+
+    const blob = new Blob([header + body], {type:"text/csv;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "resultado_consulta_massa.csv";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  btnClear.addEventListener("click", ()=>{
+    parsed = null;
+    results = null;
+    input.value = "";
+    previewPanel.style.display = "none";
+    resultPanel.style.display = "none";
+    btnProcess.disabled = true;
+    btnExport.disabled = true;
+    btnClear.disabled = true;
+  });
+})();
+</script>
+
+  </div><!-- /zoom-80 -->
+
+</body>
+</html>

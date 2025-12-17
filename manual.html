@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Compliance & Due Diligence · Verificação Manual</title>
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --bg-soft:#f6f8fc;
+      --text:#1f2a37;
+      --muted:#6b7280;
+      --border:#e8edf5;
+      --shadow: 0 18px 55px rgba(15,23,42,.10);
+      --shadow2: 0 10px 24px rgba(15,23,42,.08);
+      --primary:#1149c7;
+      --primary-2:#0d3aa0;
+      --btn:#7d8aa6;
+      --btn-hover:#6f7c97;
+      --radius:16px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(17,73,199,.07), transparent 60%),
+        linear-gradient(180deg, #ffffff, var(--bg-soft));
+      color:var(--text);
+      min-height:100vh;
+    }
+
+    .topbar{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 22px 22px 0;
+      display:flex;
+      justify-content:flex-start;
+    }
+
+    .back{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid rgba(17,73,199,.15);
+      background: rgba(17,73,199,.18);
+      color: rgba(31,42,55,.75);
+      text-decoration:none;
+      font-weight:600;
+    }
+    .back svg{width:18px;height:18px;stroke:rgba(31,42,55,.65);stroke-width:2;fill:none}
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 22px 72px;
+    }
+
+    .hero{
+      text-align:center;
+      margin-top: 36px;
+    }
+
+    .logo{
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 18px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), #2b6cff);
+      box-shadow: 0 18px 40px rgba(17,73,199,.20);
+      display:grid;
+      place-items:center;
+    }
+    .logo svg{
+      width: 40px;
+      height: 40px;
+      stroke:#fff; fill:none; stroke-width:2;
+      stroke-linecap:round; stroke-linejoin:round;
+      opacity:1;
+    }
+
+    h1{
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      letter-spacing: -0.4px;
+      color: var(--primary);
+      font-weight: 800;
+    }
+    .subtitle{
+      margin: 14px auto 0;
+      max-width: 720px;
+      font-size: clamp(16px, 1.6vw, 20px);
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .card{
+      margin: 36px auto 0;
+      max-width: 900px;
+      background:#fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow2);
+      padding: 28px;
+    }
+
+    /* ===== Tabs (novo) ===== */
+    .tabs{
+      display:flex;
+      gap:10px;
+      padding: 6px;
+      background: #f3f6fc;
+      border: 1px solid #e5ecfb;
+      border-radius: 12px;
+      margin-bottom: 18px;
+    }
+    .tab{
+      flex:1;
+      border:none;
+      background: transparent;
+      padding: 12px 12px;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor:pointer;
+      color:#42516b;
+      transition: background .12s ease, transform .12s ease;
+    }
+    .tab:hover{ transform: translateY(-1px); }
+    .tab.active{
+      background:#fff;
+      color: var(--primary-2);
+      box-shadow: 0 6px 18px rgba(15,23,42,.06);
+      border: 1px solid #e6eefc;
+    }
+
+    label{
+      display:block;
+      font-weight: 700;
+      color:#374151;
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .input{
+      width:100%;
+      padding: 18px 16px;
+      border-radius: 10px;
+      border: 1px solid #d9e1ef;
+      background: #fff;
+      font-size: 18px;
+      text-align:center;
+      outline:none;
+      transition: box-shadow .12s ease, border-color .12s ease;
+    }
+    .input:focus{
+      border-color: rgba(17,73,199,.35);
+      box-shadow: 0 0 0 4px rgba(17,73,199,.10);
+    }
+
+    .btn{
+      width:100%;
+      margin-top: 18px;
+      padding: 18px 16px;
+      border-radius: 10px;
+      border: none;
+      background: var(--btn);
+      color:#fff;
+      font-weight: 800;
+      font-size: 18px;
+      cursor:pointer;
+      transition: filter .12s ease, transform .12s ease, background .12s ease;
+      position: relative;
+    }
+    .btn:hover{ background: var(--btn-hover); transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0px); }
+    .btnPrimary{
+      background: linear-gradient(135deg, rgba(17,73,199,.95), rgba(43,108,255,.85));
+    }
+    .btnPrimary:hover{ filter: brightness(.96); }
+
+    .btn.loading{ pointer-events:none; opacity:.9; }
+    .btn.loading .btnText{ visibility:hidden; }
+    .btn.loading::after{
+      content:"";
+      position:absolute;
+      width:22px;height:22px;
+      border:3px solid rgba(255,255,255,.45);
+      border-top-color:#fff;
+      border-radius:50%;
+      top:50%;left:50%;
+      transform:translate(-50%,-50%);
+      animation:spin .8s linear infinite;
+    }
+    @keyframes spin{ to{ transform:translate(-50%,-50%) rotate(360deg);} }
+
+    .hr{
+      height:1px;
+      background:#e9eef8;
+      margin: 18px 0 0;
+    }
+
+    .footNote{
+      text-align:center;
+      margin-top: 18px;
+      color: #7b879f;
+      font-size: 14px;
+    }
+
+    .msg{
+      margin-top: 14px;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      display:none;
+    }
+    .msg.ok{ background: rgba(43,182,115,.12); border:1px solid rgba(43,182,115,.25); color:#176b44; }
+    .msg.bad{ background: rgba(255,77,79,.10); border:1px solid rgba(255,77,79,.25); color:#a12b2d; }
+
+    .hintMini{
+      margin-top: 8px;
+      color:#9aa6bd;
+      font-size: 12px;
+      text-align:center;
+    }
+
+    /* ===== Resultado (novo) ===== */
+    .result{
+      margin-top: 16px;
+      border: 1px solid #e6eefc;
+      background: #f8fbff;
+      border-radius: 12px;
+      padding: 14px;
+      display:none;
+    }
+    .resultTitle{
+      font-weight: 900;
+      color:#24324a;
+      margin:0 0 10px;
+      font-size: 16px;
+    }
+    .resultGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 700px){
+      .resultGrid{ grid-template-columns: 1fr; }
+    }
+    .pill{
+      border: 1px solid #e5ecfb;
+      background:#fff;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .pill b{ display:block; font-size:12px; color:#7b879f; margin-bottom:4px;}
+    .pill span{ font-size:15px; color:#1f2a37; font-weight:800;}
+    .badgeOk{
+      display:inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(43,182,115,.12);
+      border: 1px solid rgba(43,182,115,.25);
+      color:#176b44;
+      font-weight:900;
+      font-size: 12px;
+    }
+    .badgeRisk{
+      display:inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,204,0,.14);
+      border: 1px solid rgba(255,204,0,.30);
+      color:#7a5a00;
+      font-weight:900;
+      font-size: 12px;
+    }
+    .badgeBad{
+      display:inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,77,79,.10);
+      border: 1px solid rgba(255,77,79,.25);
+      color:#a12b2d;
+      font-weight:900;
+      font-size: 12px;
+    }
+
+        /* ===== ZOOM FIXO 90%  ===== */
+    .zoom-100{
+      transform: scale(0.8);
+      transform-origin: top center;
+      width: 125%;       /* 1 / 0.8 */
+      min-height: 125%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <a class="back" href="index.html" aria-label="Voltar ao Menu">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/><path d="M9 12h12"/></svg>
+      Voltar ao Menu
+    </a>
+  </div>
+
+  <div class="wrap">
+    <div class="hero">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2l7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4Z"></path>
+        </svg>
+      </div>
+      <h1>Compliance & Due Diligence</h1>
+      <div class="subtitle" id="subtitle">
+        Insira o CPF ou CNPJ para iniciar a análise de compliance
+      </div>
+    </div>
+
+    <div class="card">
+      <!-- Tabs -->
+      <div class="tabs" role="tablist" aria-label="Modos">
+        <button class="tab active" id="tabCompliance" type="button" onclick="setMode('compliance')">
+          Análise de Compliance
+        </button>
+        <button class="tab" id="tabAntecedentes" type="button" onclick="setMode('antecedentes')">
+          Histórico & Contratação
+        </button>
+      </div>
+
+      <label for="doc">CPF ou CNPJ</label>
+      <input id="doc" class="input" placeholder="000.000.000-00 ou 00.000.000/0000-00" inputmode="numeric" autocomplete="off" />
+
+      <button class="btn btnPrimary" id="btn" onclick="executarAcao()">
+        <span class="btnText" id="btnText">Verificar Documento</span>
+      </button>
+
+      <div id="msgOk" class="msg ok"></div>
+      <div id="msgBad" class="msg bad"></div>
+
+      <!-- Resultado (novo) -->
+      <div id="result" class="result">
+        <div class="resultTitle">Resultado da análise para contratação</div>
+        <div class="resultGrid">
+          <div class="pill"><b>Status</b><span id="rStatus" class="badgeOk">APTO</span></div>
+          <div class="pill"><b>Score de risco</b><span id="rScore">12/100 (Baixo)</span></div>
+          <div class="pill"><b>Antecedentes criminais</b><span id="rCriminal">Nenhum registro relevante</span></div>
+          <div class="pill"><b>Recomendação</b><span id="rReco">Aprovar contratação</span></div>
+        </div>
+        <div class="hintMini" style="margin-top:10px">
+          *Resultado simulado (placeholder). Integre aqui sua API/fornecedor autorizado.
+        </div>
+      </div>
+
+      <div class="hr"></div>
+      <div class="footNote" id="footNote">Os dados são validados com algoritmo de dígito verificador (Módulo 11)</div>
+      <div class="hintMini" id="hintMini">Dica: você pode colar somente números — o sistema formata automaticamente.</div>
+    </div>
+  </div>
+
+  <script>
+    const el = (id) => document.getElementById(id);
+
+    let mode = "compliance"; // compliance | antecedentes
+
+    function setMode(next){
+      mode = next;
+
+      // tabs
+      el("tabCompliance").classList.toggle("active", mode === "compliance");
+      el("tabAntecedentes").classList.toggle("active", mode === "antecedentes");
+
+      // textos
+      if(mode === "compliance"){
+        el("subtitle").textContent = "Insira o CPF ou CNPJ para iniciar a análise de compliance";
+        el("btnText").textContent = "Verificar Documento";
+        el("footNote").textContent = "Os dados são validados com algoritmo de dígito verificador (Módulo 11)";
+        el("hintMini").textContent = "Dica: você pode colar somente números — o sistema formata automaticamente.";
+      } else {
+        el("subtitle").textContent = "Insira o CPF ou CNPJ para iniciar a análise de compliance e contratação";
+        el("btnText").textContent = "Consultar Histórico";
+        el("footNote").textContent = "Consulta destinada à análise de risco para contratação, conforme políticas internas";
+        el("hintMini").textContent = "Observação: mantenha consentimento do candidato e use fonte/provedor autorizado.";
+      }
+
+      hideMsgs();
+      el("result").style.display = "none";
+    }
+
+    // ====== Máscara simples CPF/CNPJ ======
+    function onlyDigits(s){ return (s||"").replace(/\D/g,""); }
+
+    function maskCpfCnpj(value){
+      const d = onlyDigits(value);
+      if(d.length <= 11){
+        return d
+          .replace(/(\d{3})(\d)/, "$1.$2")
+          .replace(/(\d{3})(\d)/, "$1.$2")
+          .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      } else {
+        return d
+          .replace(/(\d{2})(\d)/, "$1.$2")
+          .replace(/(\d{3})(\d)/, "$1.$2")
+          .replace(/(\d{3})(\d)/, "$1/$2")
+          .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
+      }
+    }
+
+    el("doc").addEventListener("input", (e)=>{
+      e.target.value = maskCpfCnpj(e.target.value);
+      e.target.setSelectionRange(e.target.value.length, e.target.value.length);
+      hideMsgs();
+      el("result").style.display = "none";
+    });
+
+    // ====== CPF (módulo 11) ======
+    function isValidCPF(cpf){
+      cpf = onlyDigits(cpf);
+      if(cpf.length !== 11) return false;
+      if(/^(\d)\1+$/.test(cpf)) return false;
+
+      let sum = 0;
+      for(let i=0; i<9; i++) sum += parseInt(cpf[i]) * (10 - i);
+      let d1 = (sum * 10) % 11;
+      if(d1 === 10) d1 = 0;
+      if(d1 !== parseInt(cpf[9])) return false;
+
+      sum = 0;
+      for(let i=0; i<10; i++) sum += parseInt(cpf[i]) * (11 - i);
+      let d2 = (sum * 10) % 11;
+      if(d2 === 10) d2 = 0;
+      return d2 === parseInt(cpf[10]);
+    }
+
+    // ====== CNPJ (módulo 11) ======
+    function isValidCNPJ(cnpj){
+      cnpj = onlyDigits(cnpj);
+      if(cnpj.length !== 14) return false;
+      if(/^(\d)\1+$/.test(cnpj)) return false;
+
+      const calc = (base) => {
+        const weights = base === 12
+          ? [5,4,3,2,9,8,7,6,5,4,3,2]
+          : [6,5,4,3,2,9,8,7,6,5,4,3,2];
+        let sum = 0;
+        for(let i=0; i<weights.length; i++) sum += parseInt(cnpj[i]) * weights[i];
+        const mod = sum % 11;
+        return (mod < 2) ? 0 : (11 - mod);
+      };
+
+      const d1 = calc(12);
+      if(d1 !== parseInt(cnpj[12])) return false;
+      const d2 = calc(13);
+      return d2 === parseInt(cnpj[13]);
+    }
+
+    function hideMsgs(){
+      el("msgOk").style.display = "none";
+      el("msgBad").style.display = "none";
+    }
+
+    function showOk(text){
+      el("msgOk").textContent = text;
+      el("msgOk").style.display = "block";
+      el("msgBad").style.display = "none";
+    }
+
+    function showBad(text){
+      el("msgBad").textContent = text;
+      el("msgBad").style.display = "block";
+      el("msgOk").style.display = "none";
+    }
+
+    function setLoading(isLoading){
+      el("btn").classList.toggle("loading", isLoading);
+    }
+
+    async function executarAcao(){
+      const raw = el("doc").value;
+      const d = onlyDigits(raw);
+
+      // validação de documento antes de qualquer ação
+      const isCPF = d.length === 11;
+      const isCNPJ = d.length === 14;
+
+      if(!isCPF && !isCNPJ){
+        el("result").style.display = "none";
+        return showBad("Digite um CPF (11 dígitos) ou CNPJ (14 dígitos).");
+      }
+
+      if(isCPF && !isValidCPF(d)){
+        el("result").style.display = "none";
+        return showBad("CPF inválido. Verifique os dígitos e tente novamente.");
+      }
+
+      if(isCNPJ && !isValidCNPJ(d)){
+        el("result").style.display = "none";
+        return showBad("CNPJ inválido. Verifique os dígitos e tente novamente.");
+      }
+
+      // OK: documento válido
+      hideMsgs();
+
+      if(mode === "compliance"){
+        showOk((isCPF ? "CPF" : "CNPJ") + " válido ✅ (validação por dígito verificador)");
+        el("result").style.display = "none";
+        return;
+      }
+
+      // modo antecedentes/contratação (simulado)
+      setLoading(true);
+
+      setTimeout(() => {
+        setLoading(false);
+
+        // ✅ Resultado simulado (troque por retorno real da sua API)
+        // Exemplo de lógica: aqui você decide badge/status
+        el("rStatus").className = "badgeOk";
+        el("rStatus").textContent = "APTO";
+        el("rScore").textContent = "12/100 (Baixo)";
+        el("rCriminal").textContent = "Nenhum registro relevante";
+        el("rReco").textContent = "Aprovar contratação";
+
+        el("result").style.display = "block";
+        showOk("Consulta concluída ✅ (resultado simulado)");
+      }, 1100);
+    }
+
+    // Enter para enviar
+    el("doc").addEventListener("keydown", (e)=>{
+      if(e.key === "Enter") executarAcao();
+    });
+  </script>
+</body>
+</html>
